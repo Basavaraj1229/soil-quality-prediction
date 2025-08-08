@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Login | Soil Prediction{% endblock %}
+{% block content %}
+<div class="flex items-center justify-center min-h-screen">
+    <div class="bg-white p-10 rounded-lg shadow-xl w-full max-w-md">
+        <h2 class="text-3xl font-bold text-center text-blue-600 mb-6">🌱 Soil Login</h2>
+
+        {% if error %}
+            <p class="text-red-500 text-center mb-4">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Username"
+                   class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+
+            <input type="password" name="password" placeholder="Password"
+                   class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+
+            <button type="submit"
+                    class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition">
+                Login
+            </button>
+        </form>
+
+        <p class="mt-4 text-center text-sm">
+            Don’t have an account?
+            <a href="{% url 'signup' %}" class="text-blue-500 hover:underline font-semibold">Sign Up</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}🌱 Soil Prediction{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900 flex">
+
+    <!-- Sidebar -->
+    <nav class="w-64 min-h-screen bg-gradient-to-b from-blue-700 to-blue-500 text-white p-6 shadow-lg fixed flex flex-col">
+        <div class="mb-8 text-center">
+            <h1 class="text-2xl font-bold">🌱 Soil Prediction</h1>
+            <p class="text-sm opacity-80">Know your soil better! 🌍</p>
+        </div>
+        
+        <ul class="space-y-5">
+            <li>
+                <a href="/" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-800 rounded-lg transition">
+                    <span>🏠</span> <span>Home</span>
+                </a>
+            </li>
+            <li>
+                <a href="/soil" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-800 rounded-lg transition">
+                    <span>🌾</span> <span>Soil Quality</span>
+                </a>
+            </li>
+            <li>
+                <a href="/about" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-800 rounded-lg transition">
+                    <span>ℹ️</span> <span>About</span>
+                </a>
+            </li>
+            <li>
+                <a href="/contact" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-800 rounded-lg transition">
+                    <span>📞</span> <span>Contact</span>
+                </a>
+            </li>
+        </ul>
+
+        {% if request.user.is_authenticated %}
+        <div class="mt-10 border-t border-white/30 pt-4 text-center text-sm">
+            <p class="mb-2">👤 <strong>{{ request.user.username }}</strong></p>
+            <a href="{% url 'logout' %}" class="bg-red-600 px-4 py-2 rounded-lg text-white hover:bg-red-700 transition">Logout</a>
+        </div>
+        {% endif %}
+
+        <div class="mt-auto text-center text-sm opacity-75 pt-6">
+            🌿 Grow with AI | © 2025 Soil Predictor
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="ml-64 p-8 w-full">
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>

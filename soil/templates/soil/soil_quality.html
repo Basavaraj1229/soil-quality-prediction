@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}🌱 Soil Quality Prediction{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-10 flex flex-col md:flex-row gap-8">
+    <div class="w-full md:w-3/5 bg-white p-12 rounded-lg shadow-xl border border-gray-300">
+        <h2 class="text-5xl font-extrabold text-center text-blue-700 mb-10">🌱 Soil Quality Prediction</h2>
+        
+        <h3 class="text-2xl font-semibold mb-6 text-gray-700">🔍 Enter Soil Parameters</h3>
+        
+        <form method="POST" class="space-y-8" onsubmit="return validateForm()">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-2 gap-6">
+                <div class="relative">
+                    <input type="number" name="ph" step="0.1" placeholder=" " class="styled-input dynamic-input" required>
+                    <label class="input-label">🌡️ pH Level</label>
+                </div>
+
+                <div class="relative">
+                    <input type="number" name="nitrogen" placeholder=" " class="styled-input dynamic-input" required>
+                    <label class="input-label">🧪 Nitrogen (%)</label>
+                </div>
+
+                <div class="relative">
+                    <input type="number" name="phosphorus" placeholder=" " class="styled-input dynamic-input" required>
+                    <label class="input-label">🧪 Phosphorus (%)</label>
+                </div>
+
+                <div class="relative">
+                    <input type="number" name="potassium" placeholder=" " class="styled-input dynamic-input" required>
+                    <label class="input-label">🧪 Potassium (%)</label>
+                </div>
+
+                <div class="relative">
+                    <input type="number" name="organic_carbon" step="0.1" placeholder=" " class="styled-input dynamic-input" required>
+                    <label class="input-label">🌱 Organic Carbon (%)</label>
+                </div>
+
+                <div class="relative">
+                    <input type="number" name="sand" placeholder=" " class="styled-input dynamic-input" required>
+                    <label class="input-label">🏖️ Sand (%)</label>
+                </div>
+
+                <div class="relative">
+                    <input type="number" name="silt" placeholder=" " class="styled-input dynamic-input" required>
+                    <label class="input-label">🌾 Silt (%)</label>
+                </div>
+
+                <div class="relative">
+                    <input type="number" name="clay" placeholder=" " class="styled-input dynamic-input" required>
+                    <label class="input-label">🧱 Clay (%)</label>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 text-white px-6 py-4 rounded-lg font-bold text-lg transition transform hover:scale-105 hover:shadow-lg">
+                🚀 Predict Soil Type
+            </button>
+        </form>
+    </div>
+
+    <div class="w-full md:w-2/5 p-8 bg-gray-100 text-gray-900 rounded-lg shadow-md border border-gray-300">
+        <h3 class="text-2xl font-semibold text-gray-700">🔹 Live Preview</h3>
+        <div class="mt-4 space-y-2">
+            <p>🌡️ pH Level: <span id="ph-preview" class="font-bold text-blue-600"></span></p>
+            <p>🧪 Nitrogen: <span id="nitrogen-preview" class="font-bold text-blue-600"></span> %</p>
+            <p>🧪 Phosphorus: <span id="phosphorus-preview" class="font-bold text-blue-600"></span> %</p>
+            <p>🧪 Potassium: <span id="potassium-preview" class="font-bold text-blue-600"></span> %</p>
+            <p>🌱 Organic Carbon: <span id="organic-preview" class="font-bold text-blue-600"></span> %</p>
+            <p>🏖️ Sand: <span id="sand-preview" class="font-bold text-blue-600"></span> %</p>
+            <p>🌾 Silt: <span id="silt-preview" class="font-bold text-blue-600"></span> %</p>
+            <p>🧱 Clay: <span id="clay-preview" class="font-bold text-blue-600"></span> %</p>
+            <div class="mt-4 p-3 bg-green-200 text-green-900 font-bold rounded-lg hidden" id="recommendation">
+                ✅ Soil Quality Looks Good!
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.dynamic-input').forEach(input => {
+        input.addEventListener('input', updatePreview);
+    });
+
+    function updatePreview() {
+        document.getElementById('ph-preview').innerText = document.querySelector('input[name="ph"]').value || 'N/A';
+        document.getElementById('nitrogen-preview').innerText = document.querySelector('input[name="nitrogen"]').value || 'N/A';
+        document.getElementById('phosphorus-preview').innerText = document.querySelector('input[name="phosphorus"]').value || 'N/A';
+        document.getElementById('potassium-preview').innerText = document.querySelector('input[name="potassium"]').value || 'N/A';
+        document.getElementById('organic-preview').innerText = document.querySelector('input[name="organic_carbon"]').value || 'N/A';
+        document.getElementById('sand-preview').innerText = document.querySelector('input[name="sand"]').value || 'N/A';
+        document.getElementById('silt-preview').innerText = document.querySelector('input[name="silt"]').value || 'N/A';
+        document.getElementById('clay-preview').innerText = document.querySelector('input[name="clay"]').value || 'N/A';
+
+        let ph = parseFloat(document.querySelector('input[name="ph"]').value);
+        let recommendation = document.getElementById('recommendation');
+        
+        if (ph >= 6 && ph <= 7.5) {
+            recommendation.innerText = "✅ Soil pH is optimal!";
+            recommendation.classList.remove("hidden");
+        } else if (ph < 6) {
+            recommendation.innerText = "⚠️ Soil is acidic! Consider adding lime.";
+            recommendation.classList.remove("hidden");
+        } else if (ph > 7.5) {
+            recommendation.innerText = "⚠️ Soil is alkaline! Consider adding organic matter.";
+            recommendation.classList.remove("hidden");
+        } else {
+            recommendation.classList.add("hidden");
+        }
+    }
+
+    function validateForm() {
+        let allInputs = document.querySelectorAll('.styled-input');
+        let valid = true;
+
+        allInputs.forEach(input => {
+            if (input.value === '' || input.value <= 0) {
+                input.style.borderColor = 'red';
+                valid = false;
+            } else {
+                input.style.borderColor = '#ddd';
+            }
+        });
+
+        return valid;
+    }
+</script>
+
+<style>
+    .styled-input {
+        width: 100%;
+        padding: 14px;
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        outline: none;
+        font-size: 16px;
+        background: #f9f9f9;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .styled-input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        background: #fff;
+    }
+
+    .relative {
+        position: relative;
+    }
+
+    .input-label {
+        position: absolute;
+        top: 50%;
+        left: 14px;
+        transform: translateY(-50%);
+        font-size: 16px;
+        color: #888;
+        transition: 0.3s;
+        pointer-events: none;
+        background: white;
+        padding: 2px 6px;
+    }
+
+    .styled-input:focus + .input-label,
+    .styled-input:not(:placeholder-shown) + .input-label {
+        top: 5px;
+        left: 12px;
+        font-size: 14px;
+        color: #007bff;
+    }
+</style>
+{% endblock %}

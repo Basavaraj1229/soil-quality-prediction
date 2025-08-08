@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}🌱 Prediction Result{% endblock %}
+
+{% block content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+<div id="result-section" class="max-w-3xl mx-auto mt-10">
+    <div class="bg-green-100 p-8 rounded-lg shadow-lg border border-green-300 text-center">
+        <h3 class="text-3xl font-bold text-green-900">📝 Prediction Result</h3>
+        <p class="text-2xl mt-4">Soil Type: <span class="font-semibold text-green-900">{{ prediction }}</span></p>
+    </div>
+    <div class="mt-6 p-6 bg-yellow-100 text-yellow-900 text-center rounded-lg shadow-lg border border-yellow-300">
+        <h3 class="text-2xl font-bold">💡 Improvement Tips</h3>
+        <p class="text-lg mt-2">{{ recommendation }}</p>
+    </div>
+    <div class="mt-6 p-6 bg-white text-gray-900 text-left rounded-lg shadow-lg border border-gray-300">
+        <h3 class="text-2xl font-bold text-gray-700 mb-2">🌾 Dummy Fertilizer Recommendation</h3>
+        <p class="text-lg" id="fertilizer-recommendation">Loading recommendation...</p>
+    </div>
+    <div class="mt-6 text-center flex flex-col md:flex-row justify-center gap-4">
+        <a href="{% url 'soil_quality' %}" class="bg-blue-500 text-white px-6 py-3 rounded-lg">🔄 Predict Another Soil Type</a>
+        <button onclick="downloadCurrentPage()" class="bg-green-600 text-white px-6 py-3 rounded-lg">⬇️ Download This Report</button>
+    </div>
+</div>
+
+<script>
+function getRandomFertilizer() {
+    const fertilizers = [
+        "Compost, Vermicompost",
+        "Cow Dung, Biofertilizers",
+        "Urea, DAP (Di-Ammonium Phosphate)",
+        "MOP (Muriate of Potash), SSP (Single Super Phosphate)",
+        "Compost, Urea",
+        "Vermicompost, DAP",
+        "Biofertilizers, MOP",
+        "Cow Dung, SSP",
+        "Organic Mix: Compost + Vermicompost",
+        "Chemical Mix: DAP + MOP + SSP"
+    ];
+    const randomIndex = Math.floor(Math.random() * fertilizers.length);
+    return fertilizers[randomIndex];
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('fertilizer-recommendation').innerText = getRandomFertilizer();
+});
+
+function downloadCurrentPage() {
+    const element = document.getElementById('result-section');
+    const currentDate = new Date().toISOString().slice(0,10);
+    const fileName = `soil_prediction_report_${currentDate}.pdf`;
+    html2pdf().set({
+        margin: 0.5,
+        filename: fileName,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    }).from(element).save();
+}
+</script>
+{% endblock %}
